@@ -149,6 +149,9 @@ class Frontier(object):
         if self.empty:
             return "MISS " + self.task.name
         best = self.bestPosterior
+        #print("*"*100)
+        #print("This is the best program: ", best.program)
+        #print("*"*100)
         return "HIT %s w/ %s ; log prior = %f ; log likelihood = %f" % (
             self.task.name, best.program, best.logPrior, best.logLikelihood)
 
@@ -158,6 +161,16 @@ class Frontier(object):
         return "\n".join([self.task.name] +
                          ["%f\t%s" % (e.logPosterior, e.program)
                           for e in self.normalize()])
+    
+    @staticmethod
+    def output_hit_programs(frontiers):
+        hit_programs = list()
+        for f in frontiers:
+            if f.empty:
+                continue
+            best = f.bestPosterior
+            hit_programs.append(str(best.program))
+        return hit_programs
 
     @staticmethod
     def describe(frontiers):

@@ -361,7 +361,7 @@ def ecIterator(grammar, tasks,
             
         sys.exit(0)
     
-    
+    all_hit_programs = set() 
     for j in range(resume or 0, iterations):
         if storeTaskMetrics and rewriteTaskMetrics:
             eprint("Resetting task metrics for next iteration.")
@@ -405,6 +405,9 @@ def ecIterator(grammar, tasks,
                                                       enumerationTimeout=enumerationTimeout,
                                                       CPUs=CPUs,
                                                       evaluationTimeout=evaluationTimeout)
+            hit_programs = Frontier.output_hit_programs(topDownFrontiers)
+            for h_program in hit_programs:
+                all_hit_programs.add(h_program)
             result.trainSearchTime = {t: tm for t, tm in times.items() if tm is not None}
         else:
             eprint("Skipping top-down enumeration because we are not using the generative model")
@@ -483,7 +486,9 @@ def ecIterator(grammar, tasks,
 
             graphPrimitives(result, "%s_primitives_%d_"%(outputPrefix,j))
             
-
+        with open("hit_programs.txt", "w") as fhand:
+            for hit_program in sorted(list(all_hit_programs)):
+                fhand.write(hit_program+"\n")
         yield result
 
 
